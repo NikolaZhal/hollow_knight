@@ -1,10 +1,11 @@
 import pygame
 from settings import *
 
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, groups, obstacles_sprites):
         super().__init__(groups)
-        self.image = pygame.image.load("sprites/kitty.png").convert_alpha()
+        self.image = pygame.image.load("sprites/wizard.png").convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-10, -26)
         self.direction = pygame.math.Vector2()
@@ -53,8 +54,6 @@ class Player(pygame.sprite.Sprite):
         self.collision("vertical")
         self.rect.center = self.hitbox.center
 
-
-
     def collision(self, direction):
         self.on_ground = False
         if direction == "horizontal":
@@ -74,7 +73,6 @@ class Player(pygame.sprite.Sprite):
                         self.jump_speed = 0
                     elif self.direction.y < 0:
                         self.hitbox.top = sprite.hitbox.bottom
-
 
     def update(self):
         self.input()

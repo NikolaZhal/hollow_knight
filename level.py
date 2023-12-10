@@ -3,6 +3,7 @@ from settings import *
 from tile import Tile
 from player import Player
 from debug import debug
+from utils import map_from_csv
 
 
 class Level:
@@ -11,21 +12,22 @@ class Level:
         self.display_surface = pygame.display.get_surface()
         # создали группы спрайтов
         self.visible_sprites = YSortCameraGroup()
-        self.obstacles_sprites = pygame.sprite.Group()
-        self.create_map()
+        main_csv_map = map_from_csv(level0["main"])
+        self.main_map = self.create_group(main_csv_map, "main")
+        self.player = Player((64, 128), [self.visible_sprites], self.main_map)
 
-    def create_map(self):
-        for row_index, row in enumerate(WORLD_MAP):
-            for col_index, col in enumerate(row):
-                x = col_index * TILESIZE
-                y = row_index * TILESIZE
-                if col == "x":
-                    Tile((x, y), [self.visible_sprites, self.obstacles_sprites])
-                if col == "p":
-                    self.player = Player(
-                        (x, y), [self.visible_sprites], self.obstacles_sprites
-                    )
+        # Tile((x, y), [self.visible_sprites, self.obstacles_sprites])
 
+    def create_group(self, map, type):
+        group = pygame.sprite.Group()
+
+        for row_index, row in enumerate(map):
+            for col_index, val in enumerate(row):
+                if val != "-1":
+                    x, y = col_index * TILESIZE, row_index * TILESIZE
+                    if type == "main":
+                        sprite = Tile((x, y), [self.visible_sprites, group])
+        return group
     def run(self):
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
