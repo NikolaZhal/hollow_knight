@@ -57,7 +57,6 @@ class Player(pygame.sprite.Sprite):
 
     def collision(self, direction):
         self.on_ground = False
-
         if direction == "horizontal":
             for sprite in self.obstacles_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
@@ -68,7 +67,7 @@ class Player(pygame.sprite.Sprite):
         elif direction == "vertical":
             for sprite in self.obstacles_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
-                    if self.direction.y > 0:
+                    if self.direction.y == 0:
                         self.hitbox.bottom = sprite.hitbox.top
                         self.on_ground = True
                         self.is_jumping = False
