@@ -1,9 +1,9 @@
 import pygame
 from settings import *
-from tile import Tile
+from tile import Tile, StaticTile
 from player import Player
 from debug import debug
-from utils import map_from_csv
+from utils import map_from_csv, import_cut_graphics
 
 
 class Level:
@@ -26,8 +26,11 @@ class Level:
                 if val != "-1":
                     x, y = col_index * TILESIZE, row_index * TILESIZE
                     if type == "main":
-                        sprite = Tile((x, y), [self.visible_sprites, group])
+                        terrain_tiles = import_cut_graphics("./sprites/map/tileSet.png")
+                        tile_surface = terrain_tiles[int(val)]
+                        sprite = StaticTile((x, y), [self.visible_sprites, group], tile_surface)
         return group
+
     def run(self):
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
