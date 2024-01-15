@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+from utils import get_speed
 
 
 class Player(pygame.sprite.Sprite):
@@ -10,8 +11,9 @@ class Player(pygame.sprite.Sprite):
         self.hitbox = self.rect.inflate(-10, -26)
         self.direction = pygame.math.Vector2()
         self.speed = 5
-        self.jump_speed = 10
-        self.gravity = 1
+        # 9.8 м/с2 * на размер тайла (типо игровой метр) / на fps
+        self.g_const = int(1.8 * 64 / 60)
+        self.vertical_speed = 0
         self.on_ground = False
         self.is_jumping = False
         self.obstacles_sprites = obstacles_sprites
@@ -21,8 +23,8 @@ class Player(pygame.sprite.Sprite):
 
         if keys[pygame.K_UP] or keys[pygame.K_w]:
             if self.on_ground:
-                self.is_jumping = True
-                self.jump_speed = 10
+                self.on_ground = False
+                self.vertical_speed = -get_speed(1 * 64, self.g_const)
 
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.direction.x = -1
@@ -37,22 +39,12 @@ class Player(pygame.sprite.Sprite):
 
         self.hitbox.x += self.direction.x * self.speed
         self.collision("horizontal")
+        self.vertical_speed += self.g_const
 
-        if not self.is_jumping and not self.on_ground:
-            # Возвращаем игрока на землю, если он не прыгает и не находится на земле
-            self.hitbox.y += self.gravity
-            self.collision("vertical")
-
-        if self.is_jumping:
-            self.hitbox.y -= self.jump_speed
-            self.jump_speed -= self.gravity
-
-            if self.jump_speed < 0:
-                self.is_jumping = False
-
-        self.hitbox.y += self.direction.y * self.speed
-        self.collision("vertical")
+        self.hitbox.y += self.vertical_speed
+        # self.hitbox.y += self.direction.y * self.speed
         self.rect.center = self.hitbox.center
+        self.collision("vertical")
 
     def collision(self, direction):
         self.on_ground = False
@@ -68,11 +60,12 @@ class Player(pygame.sprite.Sprite):
                 if sprite.hitbox.colliderect(self.hitbox):
                     if self.direction.y == 0:
                         self.hitbox.bottom = sprite.hitbox.top
+                        self.vertical_speed = 0
                         self.on_ground = True
-                        self.is_jumping = False
-                        self.jump_speed = 0
                     elif self.direction.y < 0:
                         self.hitbox.top = sprite.hitbox.bottom
+                    else:
+                        self.vertical_speed += self.g_const
 
     def update(self):
         self.input()

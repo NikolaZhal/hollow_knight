@@ -24,3 +24,7 @@ def import_cut_graphics(path):
             tiles.append(new_surf)
 
     return tiles
+
+
+def get_speed(height, g_const):
+    return int(abs((2 * g_const * height) ** 0.5))
