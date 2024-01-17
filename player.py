@@ -19,17 +19,35 @@ class Player(pygame.sprite.Sprite):
         self.on_ground = False
         self.is_jumping = False
         self.obstacles_sprites = obstacles_sprites
+        self.dash_distance = 50  # Расстояние рывка
+        self.dash_duration = 200  # Продолжительность рывка в миллисекундах
+        self.is_dashing = False
+        self.dash_start_time = 0
+        self.clock = pygame.time.Clock()
 
     def input(self):
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
+        if keys[pygame.K_UP] or keys[pygame.K_w] or keys[pygame.K_SPACE]:
             if self.on_ground:
                 self.on_ground = False
                 self.vertical_speed = -get_speed(3 * 64, self.g_const)
 
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.direction.x = -1
+
+        if keys[pygame.K_E] and not self.is_dashing:
+            self.is_dashing = True
+            self.dash_start_time = pygame.time.get_ticks()
+
+        # Проверка продолжительности рывка
+        if self.is_dashing:
+            elapsed_time = pygame.time.get_ticks() - self.dash_start_time
+            if elapsed_time < self.dash_duration:
+                self.hitbox.x += self.dash_distance * (elapsed_time / self.dash_duration) * self.direction.x
+            else:
+                self.is_dashing = False
+
         elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.direction.x = 1
         else:
