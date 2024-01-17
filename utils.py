@@ -26,5 +26,15 @@ def import_cut_graphics(path):
     return tiles
 
 
+def get_tile_part(orig_surf, new_width, x=0, y=0, width=TILESIZE, height=TILESIZE):
+    new_surf = pygame.Surface((new_width, TILESIZE), flags=pygame.SRCALPHA)
+    new_surf.blit(
+        orig_surf,
+        (0, 0),
+        pygame.Rect(x, y, width, height),
+    )
+    return new_surf
+
+
 def get_speed(height, g_const):
     return int(abs((2 * g_const * height) ** 0.5))

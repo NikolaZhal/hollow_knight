@@ -3,7 +3,7 @@ from settings import *
 from tile import Tile, StaticTile
 from player import Player
 from debug import debug
-from utils import map_from_csv, import_cut_graphics
+from utils import map_from_csv, import_cut_graphics, get_tile_part
 
 
 class Level:
@@ -24,11 +24,23 @@ class Level:
         for row_index, row in enumerate(map):
             for col_index, val in enumerate(row):
                 if val != "-1":
+                    x_offset = 0
                     x, y = col_index * TILESIZE, row_index * TILESIZE
                     if type == "main":
                         terrain_tiles = import_cut_graphics("./sprites/map/tileSet.png")
                         tile_surface = terrain_tiles[int(val)]
-                        sprite = StaticTile((x, y), [self.visible_sprites, group], tile_surface)
+                        if int(val) == 21:
+                            x_offset = 30
+                            tile_surface = get_tile_part(tile_surface, 34, 30)
+                        if int(val) == 23:
+                            tile_surface = get_tile_part(tile_surface, 34, width=34)
+                            print(tile_surface.get_rect())
+                        sprite = StaticTile(
+                            [x, y],
+                            [self.visible_sprites, group],
+                            tile_surface,
+                            x_offset=x_offset,
+                        )
         return group
 
     def run(self):

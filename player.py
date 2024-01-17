@@ -7,8 +7,10 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, pos, groups, obstacles_sprites):
         super().__init__(groups)
         self.image = pygame.image.load("sprites/wizard.png").convert_alpha()
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(-10, -26)
+        self.hitbox = pygame.rect.Rect(self.rect.x + 20, self.rect.y + 12, 24, 40)
+
         self.direction = pygame.math.Vector2()
         self.speed = 5
         # 9.8 м/с2 * на размер тайла (типо игровой метр) / на fps
