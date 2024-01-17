@@ -33,25 +33,17 @@ class Player(pygame.sprite.Sprite):
                 self.on_ground = False
                 self.vertical_speed = -get_speed(3 * 64, self.g_const)
 
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            self.direction.x = -1
-
-        if keys[pygame.K_E] and not self.is_dashing:
+        if keys[pygame.K_e] and not self.is_dashing:
+            self.dash_distance = min(50, self.get_nearest_wall())
             self.is_dashing = True
             self.dash_start_time = pygame.time.get_ticks()
-
-        # Проверка продолжительности рывка
-        if self.is_dashing:
-            elapsed_time = pygame.time.get_ticks() - self.dash_start_time
-            if elapsed_time < self.dash_duration:
-                self.hitbox.x += self.dash_distance * (elapsed_time / self.dash_duration) * self.direction.x
+        if not self.is_dashing:
+            if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+                self.direction.x = -1
+            elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+                self.direction.x = 1
             else:
-                self.is_dashing = False
-
-        elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            self.direction.x = 1
-        else:
-            self.direction.x = 0
+                self.direction.x = 0
 
     def move(self):
         if self.direction.magnitude() != 0:
@@ -62,9 +54,23 @@ class Player(pygame.sprite.Sprite):
         self.vertical_speed += self.g_const
 
         self.hitbox.y += self.vertical_speed
+        self.dash_func()
         # self.hitbox.y += self.direction.y * self.speed
         self.rect.center = self.hitbox.center
         self.collision("vertical")
+
+    def get_nearest_wall(self):
+        lenght = 0
+        mask = self.hitbox.copy()
+        while (
+            not any(
+                [sprite.hitbox.colliderect(mask) for sprite in self.obstacles_sprites]
+            )
+            and lenght <= self.dash_distance
+        ):
+            lenght += 1
+            mask.x += self.direction.x
+        return lenght
 
     def collision(self, direction):
         self.on_ground = False
@@ -87,6 +93,19 @@ class Player(pygame.sprite.Sprite):
                         self.on_ground = True
                     else:
                         self.vertical_speed += self.g_const
+
+    def dash_func(self):
+        # Проверка продолжительности рывка
+        if self.is_dashing:
+            elapsed_time = pygame.time.get_ticks() - self.dash_start_time
+            if elapsed_time < self.dash_duration:
+                self.hitbox.x += int(
+                    self.dash_distance
+                    * (elapsed_time / self.dash_duration)
+                    * self.direction.x
+                )
+            else:
+                self.is_dashing = False
 
     def update(self):
         self.input()

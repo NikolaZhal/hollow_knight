@@ -34,7 +34,6 @@ class Level:
                             tile_surface = get_tile_part(tile_surface, 34, 30)
                         if int(val) == 23:
                             tile_surface = get_tile_part(tile_surface, 34, width=34)
-                            print(tile_surface.get_rect())
                         sprite = StaticTile(
                             [x, y],
                             [self.visible_sprites, group],
