@@ -24,7 +24,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_UP] or keys[pygame.K_w]:
             if self.on_ground:
                 self.on_ground = False
-                self.vertical_speed = -get_speed(1 * 64, self.g_const)
+                self.vertical_speed = -get_speed(3 * 64, self.g_const)
 
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.direction.x = -1
@@ -58,12 +58,13 @@ class Player(pygame.sprite.Sprite):
         elif direction == "vertical":
             for sprite in self.obstacles_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
-                    if self.direction.y == 0:
+                    if self.vertical_speed < 0:
+                        self.hitbox.top = sprite.hitbox.bottom
+                        self.vertical_speed = 0
+                    elif self.vertical_speed > 0:
                         self.hitbox.bottom = sprite.hitbox.top
                         self.vertical_speed = 0
                         self.on_ground = True
-                    elif self.direction.y < 0:
-                        self.hitbox.top = sprite.hitbox.bottom
                     else:
                         self.vertical_speed += self.g_const
 
