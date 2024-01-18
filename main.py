@@ -21,7 +21,7 @@ class Game:
                     sys.exit()
             self.screen.fill("gray")
             self.level.run()
-            debug(self.level.player.get_nearest_wall())
+            # debug(self.level.player.get_nearest_wall())
             pygame.display.update()
             self.clock.tick(FPS)
 
