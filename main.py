@@ -19,7 +19,7 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-            self.screen.fill("orange")
+            self.screen.fill("gray")
             self.level.run()
             debug(self.level.player.get_nearest_wall())
             pygame.display.update()

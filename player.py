@@ -24,6 +24,7 @@ class Player(pygame.sprite.Sprite):
         self.is_dashing = False
         self.dash_start_time = 0
         self.clock = pygame.time.Clock()
+        self.respawn_point = (200, 140)
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -44,6 +45,9 @@ class Player(pygame.sprite.Sprite):
                 self.direction.x = 1
             else:
                 self.direction.x = 0
+            
+
+        
 
     def move(self):
         if self.direction.magnitude() != 0:
@@ -58,6 +62,9 @@ class Player(pygame.sprite.Sprite):
         # self.hitbox.y += self.direction.y * self.speed
         self.rect.center = self.hitbox.center
         self.collision("vertical")
+
+        if self.rect.y > 1100:
+            self.reset_position()
 
     def get_nearest_wall(self):
         lenght = 0
@@ -106,6 +113,9 @@ class Player(pygame.sprite.Sprite):
                 )
             else:
                 self.is_dashing = False
+
+    def reset_position(self):
+        self.hitbox.x, self.hitbox.y = self.respawn_point
 
     def update(self):
         self.input()
