@@ -31,6 +31,8 @@ class Player(pygame.sprite.Sprite):
         self.clock += 0.50
         if self.direction.x != 0:
             self.image = self.walk_images[int(self.clock) % len(self.walk_images)]
+        if self.direction.x < 0:
+            self.image = pygame.transform.flip(self.image, True, False)
 
     def input(self):
         keys = pygame.key.get_pressed()
