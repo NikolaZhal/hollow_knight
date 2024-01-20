@@ -41,10 +41,10 @@ def get_speed(height, g_const):
     return int(abs((2 * g_const * height) ** 0.5))
 
 
-def wizhard_walk():
+def animation(way):
     tiles = []
-    for el in os.listdir("./sprites/WizardWalk"):
-        path = "./sprites/WizardWalk/" + el
+    for el in os.listdir(way):
+        path = f"{way}/{el}"
         surface = pygame.image.load(path).convert_alpha()
         tiles.append(surface)
 
