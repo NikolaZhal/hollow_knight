@@ -1,3 +1,4 @@
+import os
 from csv import reader
 import pygame
 from settings import TILESIZE
@@ -38,3 +39,13 @@ def get_tile_part(orig_surf, new_width, x=0, y=0, width=TILESIZE, height=TILESIZ
 
 def get_speed(height, g_const):
     return int(abs((2 * g_const * height) ** 0.5))
+
+
+def wizhard_walk():
+    tiles = []
+    for el in os.listdir("./sprites/WizardWalk"):
+        path = "./sprites/WizardWalk/" + el
+        surface = pygame.image.load(path).convert_alpha()
+        tiles.append(surface)
+
+    return tiles

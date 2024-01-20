@@ -1,15 +1,16 @@
 import pygame
 from settings import *
-from utils import get_speed
+from utils import get_speed, wizhard_walk
 
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, groups, obstacles_sprites):
         super().__init__(groups)
-        self.image = pygame.image.load("sprites/wizard.png").convert_alpha()
-        self.mask = pygame.mask.from_surface(self.image)
+        self.main_image = pygame.image.load("sprites/wizard.png").convert_alpha()
+        self.image = self.main_image
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = pygame.rect.Rect(self.rect.x + 20, self.rect.y + 12, 24, 40)
+        self.walk_images = wizhard_walk()
 
         self.direction = pygame.math.Vector2()
         self.speed = 5
@@ -23,8 +24,13 @@ class Player(pygame.sprite.Sprite):
         self.dash_duration = 200  # Продолжительность рывка в миллисекундах
         self.is_dashing = False
         self.dash_start_time = 0
-        self.clock = pygame.time.Clock()
+        self.clock = 0
         self.respawn_point = (200, 140)
+
+    def change_image(self):
+        self.clock += 0.50
+        if self.direction.x != 0:
+            self.image = self.walk_images[int(self.clock) % len(self.walk_images)]
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -45,9 +51,6 @@ class Player(pygame.sprite.Sprite):
                 self.direction.x = 1
             else:
                 self.direction.x = 0
-            
-
-        
 
     def move(self):
         if self.direction.magnitude() != 0:
@@ -120,3 +123,4 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.input()
         self.move()
+        self.change_image()
